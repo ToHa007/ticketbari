@@ -14,13 +14,17 @@ import useAxiosPublic from "../../hooks/useAxiosPublic";
 import { AuthContext } from "../../Components/Context/AuthContext/AuthProvider";
 import { Link } from "react-router-dom";
 
+// Internal Shimmer Component
+const Shimmer = () => (
+    <div className="absolute top-0 left-0 w-full h-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 dark:via-slate-700/20 to-transparent -skew-x-12" />
+);
+
 // Individual Card Component
 const BookingCard = ({ booking }) => {
     const [timeLeft, setTimeLeft] = useState("");
     const [isExpired, setIsExpired] = useState(false);
 
     useEffect(() => {
-     
         if (booking.status === "rejected" || booking.status === "paid") {
             setTimeLeft("");
             return;
@@ -58,7 +62,6 @@ const BookingCard = ({ booking }) => {
 
     return (
         <div className="group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-2">
-            {/* Image Section */}
             <div className="relative h-48 overflow-hidden">
                 <img src={booking.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 <div className={`absolute top-4 right-4 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ${getStatusColor(booking.status)}`}>
@@ -66,7 +69,6 @@ const BookingCard = ({ booking }) => {
                 </div>
             </div>
 
-            {/* Content Section */}
             <div className="p-6 space-y-4">
                 <h3 className="text-xl font-black text-slate-800 dark:text-white truncate">{booking.title}</h3>
                 
@@ -97,7 +99,6 @@ const BookingCard = ({ booking }) => {
                         <p className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter">৳{booking.totalPrice}</p>
                     </div>
                     
-                    {/* Requirement: Hide countdown if rejected or paid */}
                     {booking.status !== "rejected" && booking.status !== "paid" && (
                         <div className="text-right">
                             <p className="text-[10px] font-black text-slate-400 uppercase flex items-center justify-end gap-1"><Timer size={10}/> Starts In</p>
@@ -105,7 +106,6 @@ const BookingCard = ({ booking }) => {
                         </div>
                     )}
 
-                    {/* Requirement: Visual confirmation for "Paid" state */}
                     {booking.status === "paid" && (
                         <div className="text-right text-green-500 animate-in zoom-in">
                             <CheckCircle2 size={24} className="ml-auto mb-1" />
@@ -114,7 +114,6 @@ const BookingCard = ({ booking }) => {
                     )}
                 </div>
 
-                {/* FIX 3: Requirement 6d - Link to Stripe payment route */}
                 {booking.status === "accepted" && !isExpired && (
                     <Link 
                         to={`/user-dashboard/payment/${booking._id}`}
@@ -124,14 +123,12 @@ const BookingCard = ({ booking }) => {
                     </Link>
                 )}
 
-                {/* Requirement: Lock payment if expired */}
                 {booking.status === "accepted" && isExpired && (
                     <div className="flex items-center gap-2 p-3 bg-error/10 border border-error/20 rounded-2xl text-error text-[10px] font-bold uppercase">
                         <AlertCircle size={14}/> Payment Locked: Departure Passed
                     </div>
                 )}
 
-                {/* Optional: Add a 'View Ticket' for Paid bookings */}
                 {booking.status === "paid" && (
                     <button className="btn btn-outline border-slate-200 dark:border-slate-700 w-full rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
                         <TicketCheck size={18} />  Ticket Booked
@@ -141,6 +138,34 @@ const BookingCard = ({ booking }) => {
         </div>
     );
 };
+
+// --- SKELETON CARD COMPONENT ---
+const BookingSkeleton = () => (
+    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="h-48 bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+            <Shimmer />
+        </div>
+        <div className="p-6 space-y-4">
+            <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-800 rounded-lg relative overflow-hidden">
+                <Shimmer />
+            </div>
+            <div className="h-16 w-full bg-slate-100 dark:bg-slate-800/50 rounded-2xl relative overflow-hidden border border-slate-100 dark:border-slate-700">
+                <Shimmer />
+            </div>
+            <div className="flex gap-4">
+                <div className="h-4 w-1/3 bg-slate-100 dark:bg-slate-800 rounded relative overflow-hidden"><Shimmer /></div>
+                <div className="h-4 w-1/3 bg-slate-100 dark:bg-slate-800 rounded relative overflow-hidden"><Shimmer /></div>
+            </div>
+            <div className="flex justify-between items-end pt-2">
+                <div className="space-y-2">
+                    <div className="h-3 w-12 bg-slate-100 dark:bg-slate-800 rounded relative overflow-hidden"><Shimmer /></div>
+                    <div className="h-8 w-24 bg-slate-200 dark:bg-slate-800 rounded relative overflow-hidden"><Shimmer /></div>
+                </div>
+                <div className="h-10 w-24 bg-slate-200 dark:bg-slate-800 rounded-xl relative overflow-hidden"><Shimmer /></div>
+            </div>
+        </div>
+    </div>
+);
 
 const MyBookings = () => {
     const { user } = useContext(AuthContext);
@@ -154,13 +179,6 @@ const MyBookings = () => {
         }
     });
 
-    if (isLoading) return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center">
-            <span className="loading loading-ring loading-lg text-brand"></span>
-            <p className="mt-4 font-black text-brand animate-pulse text-xs tracking-[0.2em] uppercase">Syncing Bookings</p>
-        </div>
-    );
-
     return (
         <div className="max-w-7xl mx-auto">
             <header className="mb-10 space-y-2">
@@ -168,7 +186,14 @@ const MyBookings = () => {
                 <p className="text-slate-500 font-medium">Manage your upcoming journeys and check vendor approvals.</p>
             </header>
 
-            {bookings.length === 0 ? (
+            {isLoading ? (
+                /* ================= GRID SKELETON ================= */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[...Array(6)].map((_, i) => (
+                        <BookingSkeleton key={i} />
+                    ))}
+                </div>
+            ) : bookings.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-400 font-bold uppercase tracking-widest">No journeys found yet</p>
                     <Link to="/all-tickets" className="btn btn-link text-brand no-underline font-black uppercase">Browse Available Tickets</Link>

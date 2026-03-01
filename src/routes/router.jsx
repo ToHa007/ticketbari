@@ -28,6 +28,9 @@ import AdminRoute from "./AdminRoute";
 import ManageUsers from "../pages/ManageUsers/ManageUsers";
 import ManageTickets from "../pages/ManageTickets/ManageTickets";
 import AdvertiseTickets from "../pages/AdvertiseTickets/AdvertiseTickets";
+import AboutUS from "../pages/AboutUS/AboutUs";
+import FAQ from "../pages/FAQ/FAQ";
+
 
 
 
@@ -40,7 +43,9 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'all-tickets', element: <PrivateRoute><AllTickets /></PrivateRoute> },
       { path: 'ticket-details/:id', element: <PrivateRoute><TicketDetails /></PrivateRoute> },
-      { path: 'beAVendor', element: <PrivateRoute><Vendor /></PrivateRoute> }
+      { path: 'beAVendor', element: <PrivateRoute><Vendor /></PrivateRoute> },
+      {path:'about-us',element:<AboutUS></AboutUS>},
+      {path:'faq',element:<FAQ></FAQ>}
     ]
   },
 

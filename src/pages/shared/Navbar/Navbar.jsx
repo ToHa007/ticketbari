@@ -12,7 +12,7 @@ const Navbar = ({ theme, toggleTheme }) => {
  
   useEffect(() => {
     if (user?.email) {
-      axios.get(`http://localhost:5000/users/role/${user.email}`)
+      axios.get(`https://ticketbari-server123.vercel.app/users/role/${user.email}`)
         .then(res => setRole(res.data.role))
         .catch(err => console.error("Role fetch error:", err));
     } else {
@@ -46,7 +46,7 @@ const Navbar = ({ theme, toggleTheme }) => {
                 <NavLink to="/" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>Home</NavLink>
               </li>
               <li>
-                <NavLink to="/all-tickets" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>All Tickets</NavLink>
+                <NavLink to="/all-tickets" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>All TICKETS</NavLink>
               </li>
 
               {user && (
@@ -87,9 +87,22 @@ const Navbar = ({ theme, toggleTheme }) => {
             <li>
               <NavLink to="/" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>Home</NavLink>
             </li>
+      
+
+
+
             <li>
               <NavLink to="/all-tickets" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>All Tickets</NavLink>
             </li>
+            <li>
+              <NavLink to="/about-us" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>about us</NavLink>
+            </li>
+
+  
+      <li>
+              <NavLink to="/faq" className={({ isActive }) => isActive ? "text-brand font-bold" : "hover:text-brand"}>faq</NavLink>
+            </li>
+
           </ul>
         </div>
 
@@ -170,7 +183,7 @@ const Navbar = ({ theme, toggleTheme }) => {
           ) : (
             <Link
               to="/login"
-              className="btn bg-brand hover:bg-brand/90 dark:bg-brand-light dark:hover:bg-brand-light/90 text-white dark:text-dark-bg border-none px-6 rounded-full shadow-lg shadow-brand/20 transition-all hover:-translate-y-0.5"
+              className="btn bg-brand hover:bg-brand/90 dark:bg-brand-light dark:hover:bg-brand-light/90 text-white dark:text-dark-bg border-none px-6 rounded-xl shadow-lg shadow-brand/20 transition-all hover:-translate-y-0.5"
             >
               Login
             </Link>

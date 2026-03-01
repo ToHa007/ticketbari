@@ -24,7 +24,11 @@ const AuthProvider = ({ children }) => {
         return updateProfile(userCredential.user, {
           displayName: name,
           photoURL: photoURL
-        }).then(() => userCredential);
+        }).then(() => {
+          // Update local state immediately after profile update
+          setUser({ ...userCredential.user, displayName: name, photoURL: photoURL });
+          return userCredential;
+        });
       });
   };
 
@@ -50,14 +54,19 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
       
       if (currentUser) {
-        
         const userInfo = { email: currentUser.email };
-        axios.post("http://localhost:5000/jwt", userInfo)
+        // Get token from server
+        axios.post("https://ticketbari-server123.vercel.app/jwt", userInfo)
           .then(res => {
             if (res.data.token) {
               localStorage.setItem("access-token", res.data.token);
-              setLoading(false);
             }
+          })
+          .catch(err => {
+            console.error("JWT Error:", err);
+          })
+          .finally(() => {
+            setLoading(false); // Stop loading regardless of JWT success/fail
           });
       } else {
         localStorage.removeItem("access-token");
@@ -67,7 +76,14 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const authInfo = { user, loading, registerUser, signInUser, googleSignIn, logOut };
+  const authInfo = { 
+    user, 
+    loading, 
+    registerUser, 
+    signInUser, 
+    googleSignIn, 
+    logOut 
+  };
 
   return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
 };

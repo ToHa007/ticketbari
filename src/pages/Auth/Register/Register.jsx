@@ -76,7 +76,7 @@ const userInfo = {
   isFraud: false,
 };
 
-await axios.post("http://localhost:5000/users", userInfo);
+await axios.post("https://ticketbari-server123.vercel.app/users", userInfo);
 
 
 
